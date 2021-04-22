@@ -57,7 +57,7 @@ export default {
   components: {},
   data() {
     return {
-      code: "", //654321
+      code: "",
       sessionId: "",
       skipUrl:""
     };
@@ -78,7 +78,6 @@ export default {
   },
   methods: {
     getCode(data) {
-      console.log(data)
       const { product, sessionId } = data;
       const url = `${API_BASE}/activity-center/supersign/getInstallCode?product=${product}&sessionId=${sessionId}`;
       return new Promise((resolve, reject) => {
@@ -109,14 +108,12 @@ export default {
       }
     },
     helpClick() {
-      console.log("点击了help");
       let result = JSON.stringify({ type: "customerService", data: {} });
       window.ReactNativeWebView &&
         window.ReactNativeWebView.postMessage &&
         window.ReactNativeWebView.postMessage(result);
     },
     handleInstall() {
-      console.log("点击了安装",this.skipUrl);
       if(!this.skipUrl){
         this.$toast("提示：" + this.msg);
         return 
