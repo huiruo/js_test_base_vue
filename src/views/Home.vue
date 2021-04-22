@@ -77,10 +77,11 @@ export default {
   },
   methods: {
     getCode(data) {
+      console.log(data)
       const { product, sessionId } = data;
       const url = `${API_BASE}/activity-center/supersign/getInstallCode?product=${product}&sessionId=${sessionId}`;
       return new Promise((resolve, reject) => {
-        this.$axios
+        this.axios
           .get(url)
           .then((res) => {
             resolve(res.data);

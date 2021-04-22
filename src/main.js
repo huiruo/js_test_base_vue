@@ -11,7 +11,8 @@ import 'vant/lib/index.css'
 Vue.use(Toast)
 
 Vue.config.productionTip = false
-Vue.prototype.$axios = axios
+// Vue.prototype.$axios = axios
+Vue.prototype.axios = axios
 new Vue({
   router,
   store,
