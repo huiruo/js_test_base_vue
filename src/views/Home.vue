@@ -7,7 +7,7 @@
       <div class="container">
         <div class="operate-content">
           <div>
-            <div class="operate-top">
+            <div class="operate-top"  v-show="this.code">
               <div class="content">
                 <span class="text">安装码：</span
                 ><span class="code">{{ code }}</span>
@@ -59,11 +59,12 @@ export default {
     return {
       code: "", //654321
       sessionId: "",
+      skipUrl:""
     };
   },
   mounted() {
-    //test
-    //http://localhost:8080/#/?platformId=my&anchorId=110010397&isInApp=true&userId=110010549&sessionId=9CB0F3DF8A62C5AD9199286BDC6CDFDE&roomId=A110010347
+    //test:这个id有效: 110018313
+    //http://localhost:8080/#/?platformId=my&sessionId=BAE3779EA012BED67CDA5186DCC917AB
     //test 请求 id: http://activity-test.jiaoyoushow.com/testApi/sessionId?userId=110013764
     const sessionId = normalUtil.getMsg("sessionId");
     const product = normalUtil.getMsg("platformId");
@@ -99,17 +100,28 @@ export default {
       const res = await this.getCode(data);
       if (res.code === 1) {
         // console.log("res---->",res.data);
-        this.code = res.data;
+        const {installCode,skipUrl} = res.data
+        this.code = installCode;
+        this.skipUrl = skipUrl
       } else {
+        this.msg = res.msg
         this.$toast("请求错误" + res.msg);
       }
     },
     helpClick() {
       console.log("点击了help");
+      let result = JSON.stringify({ type: "customerService", data: {} });
+      window.ReactNativeWebView &&
+        window.ReactNativeWebView.postMessage &&
+        window.ReactNativeWebView.postMessage(result);
     },
     handleInstall() {
-      console.log("点击了安装");
-      let result = JSON.stringify({ type: "enterRoomForRoomId", data: {url:""} });
+      console.log("点击了安装",this.skipUrl);
+      if(!this.skipUrl){
+        this.$toast("提示：" + this.msg);
+        return 
+      }
+      let result = JSON.stringify({ type: "openAppDownload", data: {downloadUrl:this.skipUrl} });
       window.ReactNativeWebView &&
         window.ReactNativeWebView.postMessage &&
         window.ReactNativeWebView.postMessage(result);
