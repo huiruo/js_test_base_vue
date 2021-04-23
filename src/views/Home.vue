@@ -7,12 +7,12 @@
       <div class="container">
         <div class="operate-content">
           <div>
-            <!--<div class="operate-top"  v-show="this.code">-->
-            <div class="operate-top">
+            <div class="operate-top"  v-show="this.code">
+            <!--<div class="operate-top">-->
               <div class="content">
                 <span class="text">安装码：</span>
-                <!--<span class="code">{{ code }}</span>-->
-                <span class="code">{{ "QWERYUUIIOJHH" }}</span>
+                <span class="code">{{ code }}</span>
+                <!--<span class="code">{{ "QWERYUUIIOJHH" }}</span>-->
               </div>
               <div>
                 <img
@@ -66,13 +66,17 @@ export default {
   },
   mounted() {
     //test:这个id有效: 110018313
+    //http://localhost:8080/#/?platformId=my&sessionId=BAE3779EA012BED67CDA5186DCC917AB&version=1.0.0.100
     //http://localhost:8080/#/?platformId=my&sessionId=BAE3779EA012BED67CDA5186DCC917AB
     //test 请求 id: http://activity-test.jiaoyoushow.com/testApi/sessionId?userId=110013764
     const sessionId = normalUtil.getMsg("sessionId");
     const product = normalUtil.getMsg("platformId");
+    const version = normalUtil.getMsg("version")
+    console.log("version",version)
     if (sessionId) {
       this.sessionId = sessionId;
       this.product = product;
+      this.version = version
       this.getCode_util(product, sessionId);
     } else {
       this.$toast("没有找到sessionId");
@@ -116,6 +120,10 @@ export default {
         window.ReactNativeWebView.postMessage(result);
     },
     handleInstall() {
+      if(!this.version){
+        this.$toast("更新到最新版本后才能使用本功能噢");
+        return
+      }
       if(!this.skipUrl){
         this.$toast(this.msg);
         return 
@@ -183,7 +191,7 @@ export default {
         align-items: center;
         img {
           // height: 30px;
-          height: 26px;
+          height: 28px;
           width: 70px;
         }
         .content {
