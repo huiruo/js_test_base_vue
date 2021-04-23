@@ -7,10 +7,12 @@
       <div class="container">
         <div class="operate-content">
           <div>
-            <div class="operate-top"  v-show="this.code">
+            <!--<div class="operate-top"  v-show="this.code">-->
+            <div class="operate-top">
               <div class="content">
-                <span class="text">安装码：</span
-                ><span class="code">{{ code }}</span>
+                <span class="text">安装码：</span>
+                <!--<span class="code">{{ code }}</span>-->
+                <span class="code">{{ "QWERYUUIIOJHH" }}</span>
               </div>
               <div>
                 <img
@@ -73,7 +75,7 @@ export default {
       this.product = product;
       this.getCode_util(product, sessionId);
     } else {
-      this.$toast("加载错误，没有找到sessionId");
+      this.$toast("没有找到sessionId");
     }
   },
   methods: {
@@ -104,7 +106,7 @@ export default {
         this.skipUrl = skipUrl
       } else {
         this.msg = res.msg
-        this.$toast("请求错误" + res.msg);
+        this.$toast(res.msg);
       }
     },
     helpClick() {
@@ -115,7 +117,7 @@ export default {
     },
     handleInstall() {
       if(!this.skipUrl){
-        this.$toast("提示：" + this.msg);
+        this.$toast(this.msg);
         return 
       }
       let result = JSON.stringify({ type: "openAppDownload", data: {downloadUrl:this.skipUrl} });
@@ -180,7 +182,8 @@ export default {
         display: flex;
         align-items: center;
         img {
-          height: 30px;
+          // height: 30px;
+          height: 26px;
           width: 70px;
         }
         .content {
@@ -188,16 +191,17 @@ export default {
           align-items: center;
           .code {
             font-family: PingFang-SC-Bold;
-            font-size: 30px;
+            font-size: 18px;
             font-weight: normal;
             font-stretch: normal;
-            padding-right: 10px;
+            padding-right: 8px;
             color: #0a0909;
+            font-weight: bold;
           }
           .text {
             color: #0a0909;
             font-family: PingFang-SC-Medium;
-            font-size: 18px;
+            font-size: 16px;
           }
         }
       }
