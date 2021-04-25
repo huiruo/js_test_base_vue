@@ -3,7 +3,7 @@
     <div class="top">
       <img src="../assets/top_label.png" />
     </div>
-    <div class="install-container">
+    <div class="install-container" v-show="this.code">
       <div class="container">
         <div class="operate-content">
           <div>
@@ -69,10 +69,11 @@ export default {
     //http://localhost:8080/#/?platformId=my&sessionId=BAE3779EA012BED67CDA5186DCC917AB&version=1.0.0.100
     //http://localhost:8080/#/?platformId=my&sessionId=BAE3779EA012BED67CDA5186DCC917AB
     //test 请求 id: http://activity-test.jiaoyoushow.com/testApi/sessionId?userId=110013764
+    // http://h5web-test.jiaoyoushow.com/h5/superlabel/index.html
+    //http://h5web-test.jiaoyoushow.com/h5/superlabel/index.html#/
     const sessionId = normalUtil.getMsg("sessionId");
     const product = normalUtil.getMsg("platformId");
     const version = normalUtil.getMsg("version")
-    console.log("version",version)
     if (sessionId) {
       this.sessionId = sessionId;
       this.product = product;
