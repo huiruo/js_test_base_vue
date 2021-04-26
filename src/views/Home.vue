@@ -1,14 +1,17 @@
 <template>
   <div class="home-container">
     <div class="top">
+      <div class="container">
+        <div class="word">{{ levelName }}以上等级专属福利</div>
+      </div>
       <img src="../assets/top_label.png" />
     </div>
     <div class="install-container" v-show="this.code">
       <div class="container">
         <div class="operate-content">
           <div>
-            <div class="operate-top"  v-show="this.code">
-            <!--<div class="operate-top">-->
+            <div class="operate-top" v-show="this.code">
+              <!--<div class="operate-top">-->
               <div class="content">
                 <span class="text">安装码：</span>
                 <span class="code">{{ code }}</span>
@@ -36,6 +39,13 @@
     </div>
     <div class="step-container">
       <!-- 步骤 -->
+      <div class="container">
+        <div class="content">
+          <div>1.凡财富等级到达【{{ levelName }}】及以上账号，可获得领取机会；</div>
+          <div>2.每个账号最多只可在3个设备上领取安装码并安装；</div>
+          <div>3.安装码只可对1个设备使用哦，安装后安装码自动失效；</div>
+        </div>
+      </div>
       <img src="../assets/step_label.png" />
     </div>
     <div class="details-content">
@@ -61,24 +71,30 @@ export default {
     return {
       code: "",
       sessionId: "",
-      skipUrl:""
+      skipUrl: "",
+      levelName: "-",
     };
   },
   mounted() {
     //test:这个id有效: 110018313
-    //http://localhost:8080/#/?platformId=my&sessionId=BAE3779EA012BED67CDA5186DCC917AB&version=1.0.0.100
+    //http://localhost:8081/#/?platformId=my&sessionId=ACADA9894C4F3EA9EF435291FDEB7F06&version=1.0.0.100&h5Server=https://h5-ddos.1kyou.cn
     //http://localhost:8080/#/?platformId=my&sessionId=BAE3779EA012BED67CDA5186DCC917AB
     //test 请求 id: http://activity-test.jiaoyoushow.com/testApi/sessionId?userId=110013764
     // http://h5web-test.jiaoyoushow.com/h5/superlabel/index.html
     //http://h5web-test.jiaoyoushow.com/h5/superlabel/index.html#/
+    // https://h5web-ddos.1kyou.cn/h5/superlabel/index.html
+    //
+    //
+    const reqUrl =normalUtil.getMsg('h5Server')
     const sessionId = normalUtil.getMsg("sessionId");
     const product = normalUtil.getMsg("platformId");
-    const version = normalUtil.getMsg("version")
+    const version = normalUtil.getMsg("version");
     if (sessionId) {
       this.sessionId = sessionId;
       this.product = product;
-      this.version = version
+      this.version = version;
       this.getCode_util(product, sessionId);
+      this.getUser_util(product, sessionId);
     } else {
       this.$toast("没有找到sessionId");
     }
@@ -98,6 +114,21 @@ export default {
           });
       });
     },
+    getUser(data) {
+      const { product, sessionId } = data;
+      //GET /supersign/getSuperSignInfo
+      const url = `${API_BASE}/activity-center/supersign/getSuperSignInfo?product=${product}&sessionId=${sessionId}`;
+      return new Promise((resolve, reject) => {
+        this.axios
+          .get(url)
+          .then((res) => {
+            resolve(res.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
     async getCode_util(product, sessionId) {
       const data = {
         product,
@@ -106,11 +137,26 @@ export default {
       const res = await this.getCode(data);
       if (res.code === 1) {
         // console.log("res---->",res.data);
-        const {installCode,skipUrl} = res.data
+        const { installCode, skipUrl } = res.data;
         this.code = installCode;
-        this.skipUrl = skipUrl
+        this.skipUrl = skipUrl;
       } else {
-        this.msg = res.msg
+        this.msg = res.msg;
+        this.$toast(res.msg);
+      }
+    },
+    async getUser_util(product, sessionId) {
+      const data = {
+        product,
+        sessionId,
+      };
+      const res = await this.getUser(data);
+      if (res.code === 1) {
+        // console.log("res---->",res.data);
+        const { levelName } = res.data;
+        this.levelName = levelName;
+      } else {
+        this.msg = res.msg;
         this.$toast(res.msg);
       }
     },
@@ -121,15 +167,18 @@ export default {
         window.ReactNativeWebView.postMessage(result);
     },
     handleInstall() {
-      if(!this.version){
+      if (!this.version) {
         this.$toast("更新到最新版本后才能使用本功能噢");
-        return
+        return;
       }
-      if(!this.skipUrl){
+      if (!this.skipUrl) {
         this.$toast(this.msg);
-        return 
+        return;
       }
-      let result = JSON.stringify({ type: "openAppDownload", data: {downloadUrl:this.skipUrl} });
+      let result = JSON.stringify({
+        type: "openAppDownload",
+        data: { downloadUrl: this.skipUrl },
+      });
       window.ReactNativeWebView &&
         window.ReactNativeWebView.postMessage &&
         window.ReactNativeWebView.postMessage(result);
@@ -166,6 +215,23 @@ export default {
   min-height: 100%;
   background: #41ceff;
   .top {
+    position: relative;
+    .container {
+      position: absolute;
+      bottom: 46px;
+      right: 22px;
+      width: 200px;
+      height: 36px;
+      background-image: url("../assets/word.png");
+      background-size: cover;
+      .word {
+        line-height: 36px;
+        color: #000000;
+        font-weight: bold;
+        font-size: 16px;
+        text-align: center;
+      }
+    }
     img {
       height: auto;
       width: 100%;
@@ -225,12 +291,34 @@ export default {
     }
   }
   .step-container {
+    position: relative;
     height: auto;
     width: 100%;
     background-size: cover;
     img {
       width: 100%;
-      height: auto;
+      // height: auto;
+      // height: 134px;
+      height: 190px;
+    }
+    .container {
+      position: absolute;
+      height: 134px;
+      z-index: 99;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      .content {
+        // margin-top: 26px;
+        width: 90%;
+        margin-top: 90px;
+        margin-left:25px;
+        font-size: 13px;
+        // line-height: 18px;
+        font-weight: 700;
+      }
     }
   }
   .details-content {
