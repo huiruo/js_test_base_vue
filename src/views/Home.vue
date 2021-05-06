@@ -93,16 +93,23 @@ export default {
       this.sessionId = sessionId;
       this.product = product;
       this.version = version;
-      this.getCode_util(product, sessionId);
-      this.getUser_util(product, sessionId);
+      this.getCode_util(product, sessionId,reqUrl);
+      this.getUser_util(product, sessionId,reqUrl);
     } else {
       this.$toast("没有找到sessionId");
     }
   },
   methods: {
-    getCode(data) {
+    getCode(data,reqUrl) {
       const { product, sessionId } = data;
-      const url = `${API_BASE}/activity-center/supersign/getInstallCode?product=${product}&sessionId=${sessionId}`;
+      let actualUrl =""
+      if(reqUrl){
+        actualUrl=reqUrl
+        // console.log("Url",actualUrl)
+      }else{
+        actualUrl = API_BASE
+      }
+      const url = `${actualUrl}/activity-center/supersign/getInstallCode?product=${product}&sessionId=${sessionId}`;
       return new Promise((resolve, reject) => {
         this.axios
           .get(url)
@@ -114,10 +121,16 @@ export default {
           });
       });
     },
-    getUser(data) {
+    getUser(data,reqUrl) {
       const { product, sessionId } = data;
-      //GET /supersign/getSuperSignInfo
-      const url = `${API_BASE}/activity-center/supersign/getSuperSignInfo?product=${product}&sessionId=${sessionId}`;
+      let actualUrl =""
+      if(reqUrl){
+        actualUrl=reqUrl
+      }else{
+        actualUrl = API_BASE
+      }
+      // console.log("Url",actualUrl)
+      const url = `${actualUrl}/activity-center/supersign/getSuperSignInfo?product=${product}&sessionId=${sessionId}`;
       return new Promise((resolve, reject) => {
         this.axios
           .get(url)
@@ -129,12 +142,12 @@ export default {
           });
       });
     },
-    async getCode_util(product, sessionId) {
+    async getCode_util(product, sessionId,reqUrl) {
       const data = {
         product,
         sessionId,
       };
-      const res = await this.getCode(data);
+      const res = await this.getCode(data,reqUrl);
       if (res.code === 1) {
         // console.log("res---->",res.data);
         const { installCode, skipUrl } = res.data;
@@ -145,12 +158,12 @@ export default {
         this.$toast(res.msg);
       }
     },
-    async getUser_util(product, sessionId) {
+    async getUser_util(product, sessionId,reqUrl) {
       const data = {
         product,
         sessionId,
       };
-      const res = await this.getUser(data);
+      const res = await this.getUser(data,reqUrl);
       if (res.code === 1) {
         // console.log("res---->",res.data);
         const { levelName } = res.data;
