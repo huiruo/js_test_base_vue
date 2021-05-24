@@ -4,7 +4,8 @@
       <div class="container">
         <div class="word">{{ levelName }}以上等级专属福利</div>
       </div>
-      <img src="../assets/top_label.png" />
+      <img v-if="is_app2" src="../assets/top_label_2.png" />
+      <img v-else src="../assets/top_label.png" />
     </div>
     <div class="install-container" v-show="this.code">
       <div class="container">
@@ -50,7 +51,8 @@
     </div>
     <div class="details-content">
       <!--详情 -->
-      <img src="../assets/details.png" />
+      <img v-if="is_app2" src="../assets/details_2.png" />
+      <img v-else src="../assets/details.png" />
     </div>
     <div class="help-content">
       <div class="content">
@@ -63,7 +65,7 @@
 <script>
 import Clipboard from "clipboard";
 import normalUtil from "../utils/index";
-import API_BASE from "../api/config.js";
+import {API_BASE,IS_APP2} from "../api/config.js";
 export default {
   name: "Home",
   components: {},
@@ -73,6 +75,7 @@ export default {
       sessionId: "",
       skipUrl: "",
       levelName: "-",
+      is_app2:IS_APP2
     };
   },
   mounted() {
