@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
-import { Toast } from 'vant';
+import { Toast, Loading } from 'vant';
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
@@ -9,6 +9,7 @@ import 'vant/lib/index.css'
 
 // Vue.use(vant)
 Vue.use(Toast)
+Vue.use(Loading)
 
 Vue.config.productionTip = false
 // Vue.prototype.$axios = axios
